@@ -21,7 +21,7 @@ murmurhash3(const void *key, size_t len, uint32_t seed)
 
 	if (__predict_true(((uintptr_t)key & 3) == 0)) {
 		while (len >= sizeof(uint32_t)) {
-			uint32_t k = *(const uint32_t *)data;
+			uint32_t k = *(const uint32_t *)(const void *)data;
 
 			k *= 0xcc9e2d51;
 			k = (k << 15) | (k >> 17);
