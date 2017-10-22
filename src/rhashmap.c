@@ -32,7 +32,6 @@
 
 #define	HASH_INIT_SIZE		(16)
 #define	MAX_GROWTH_STEP		(1024U * 1024)
-#define	MIN_SHRINK_SIZE		(256)
 
 #define	APPROX_85_PERCENT(x)	(((x) * 870) >> 10)
 #define	APPROX_40_PERCENT(x)	(((x) * 409) >> 10)
@@ -52,6 +51,7 @@ struct rhashmap {
 	uint64_t	divinfo;
 	rh_bucket_t *	buckets;
 	uint64_t	hashkey;
+	unsigned	minsize;
 };
 
 static inline uint32_t __attribute__((always_inline))
@@ -352,10 +352,10 @@ probe:
 
 	/*
 	 * If the load factor is less than threshold, then shrink by
-	 * halving the size, but not more than MIN_SHRINK_SIZE.
+	 * halving the size, but not more than the minimum size.
 	 */
-	if (hmap->nitems > MIN_SHRINK_SIZE && hmap->nitems < threshold) {
-		size_t newsize = MAX(hmap->size >> 1, MIN_SHRINK_SIZE);
+	if (hmap->nitems > hmap->minsize && hmap->nitems < threshold) {
+		size_t newsize = MAX(hmap->size >> 1, hmap->minsize);
 		(void)rhashmap_resize(hmap, newsize);
 	}
 	return val;
@@ -377,9 +377,8 @@ rhashmap_create(size_t size, unsigned flags)
 		return NULL;
 	}
 	hmap->flags = flags;
-
-	size = MAX(size, HASH_INIT_SIZE);
-	if (rhashmap_resize(hmap, size) != 0) {
+	hmap->minsize = MAX(size, HASH_INIT_SIZE);
+	if (rhashmap_resize(hmap, hmap->minsize) != 0) {
 		free(hmap);
 		return NULL;
 	}
