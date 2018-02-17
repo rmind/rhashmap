@@ -67,7 +67,10 @@ special pointer value, such as `(void *)(uintptr_t)0x1`.
 
 ## Example
 
+An illustrative code fragment:
 ```c
+#include <rhashmap.h>
+
 rhashmap_t *kvmap;
 struct obj *obj;
 
