@@ -22,8 +22,9 @@ Reference:
   otherwise, a default size will be used.  Certain hash map behaviour can
   be specified using any of the following optional `flags`:
     * `RHM_NOCOPY`: the keys on insert will not be copied and the given
-    pointers to them will be expected to be valid until the key will be
-    deleted; by default
+    pointers to them will be expected to be valid and the values constant
+    until the key is deleted; by default, the put operation will make a
+    copy of the key.
     * `RHM_NONCRYPTO`: a non-cryptographic hash function will be used to
     provide higher performance.  By default, half SipHash-2-4 is used to
     defend against the hash-flooding DoS attacks.  With this flag set,
@@ -43,8 +44,8 @@ Reference:
   the result against `val` to test whether the insert was successful.
 
 * `void *rhashmap_del(rhashmap_t *hmap, const void *key, size_t len)`
- * Remove the given key.  If the key was present, return the associated
- value; otherwise return `NULL`.
+  * Remove the given key.  If the key was present, return the associated
+  value; otherwise return `NULL`.
 
 ## Notes
 
@@ -80,3 +81,9 @@ obj = rhashmap_get(kvmap, "test", sizeof("test") - 1);
 ...
 rhashmap_destroy(kvmap);
 ```
+
+## Packages
+
+Just build the package, install it and link the library using the
+`-lrhashmap` flag.
+* RPM (tested on RHEL/CentOS 7): `cd pkg && make rpm`
