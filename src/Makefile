@@ -2,6 +2,8 @@
 # This file is in the Public Domain.
 #
 
+PROJ=		rhashmap
+
 CFLAGS+=	-std=c11 -O2 -g -Wall -Wextra -Werror
 CFLAGS+=	-D_POSIX_C_SOURCE=200809L
 CFLAGS+=	-D_GNU_SOURCE -D_DEFAULT_SOURCE
@@ -31,14 +33,14 @@ else
 CFLAGS+=	-DNDEBUG
 endif
 
-LIB=		librhashmap
+LIB=		lib$(PROJ)
 INCS=		rhashmap.h
 
 OBJS=		rhashmap.o
 OBJS+=		murmurhash.o
 OBJS+=		siphash.o
 
-$(LIB).la:	LDFLAGS+=	-rpath $(LIBDIR)
+$(LIB).la:	LDFLAGS+=	-rpath $(LIBDIR) -version-info 1:0:0
 install/%.la:	ILIBDIR=	$(DESTDIR)/$(LIBDIR)
 install:	IINCDIR=	$(DESTDIR)/$(INCDIR)/
 #install:	IMANDIR=	$(DESTDIR)/$(MANDIR)/man3/
@@ -62,12 +64,12 @@ install: $(addprefix install/,$(LIB).la)
 	mkdir -p $(IINCDIR) && install -c $(INCS) $(IINCDIR)
 	#mkdir -p $(IMANDIR) && install -c $(MANS) $(IMANDIR)
 
-tests: $(OBJS) t_rhashmap.o
-	$(CC) $(CFLAGS) $^ -o t_rhashmap
-	MALLOC_CHECK_=3 ./t_rhashmap
+tests: $(OBJS) t_$(PROJ).o
+	$(CC) $(CFLAGS) $^ -o t_$(PROJ)
+	MALLOC_CHECK_=3 ./t_$(PROJ)
 
 clean:
 	libtool --mode=clean rm
-	rm -rf .libs *.o *.lo *.la t_rhashmap
+	rm -rf .libs *.o *.lo *.la t_$(PROJ)
 
 .PHONY: all obj lib install tests clean

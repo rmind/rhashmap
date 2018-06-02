@@ -34,11 +34,11 @@ Reference:
   * Destroy the hash map, freeing the memory it uses.
 
 * `void *rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)`
-  * Lookup a arbitrary value associated with a key of a given length.
-  Return `NULL` if the key is not found (see the caveats section). 
+  * Lookup the key (of a given length) and return the associated with it.
+  Return `NULL` if the key is not found (see the caveats section) ,
 
 * `void *rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)`
-  * Insert an arbitrary value given the key.  If the key is already present,
+  * Insert the key with an arbitrary value.  If the key is already present,
   return the already existing associated value without changing it.
   Otherwise, on a successful insert, return the given value.  Just compare
   the result against `val` to test whether the insert was successful.
@@ -90,3 +90,4 @@ rhashmap_destroy(kvmap);
 Just build the package, install it and link the library using the
 `-lrhashmap` flag.
 * RPM (tested on RHEL/CentOS 7): `cd pkg && make rpm`
+* DEB (tested on Debian 9): `cd pkg && make deb`

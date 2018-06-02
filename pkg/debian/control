@@ -1,0 +1,36 @@
+Source: rhashmap
+Priority: extra
+Maintainer: https://github.com/rmind
+Build-Depends:
+ debhelper (>= 9),
+ make,
+ libtool
+Standards-Version: 3.9.1
+Homepage: https://github.com/rmind/rhashmap
+License: BSD-2-clause
+
+Package: librhashmap1
+Section: lib
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Robin Hood hash map library
+ Robin Hood hash map library -- a general purpose hash table, using open
+ addressing with linear probing and Robin Hood hashing for the collision
+ resolution algorithm.  Optimal for solving the _dictionary problem_.
+ The library provides support for the SipHash and Murmurhash3 algorithms.
+ The implementation is written in C99 and distributed under the 2-clause
+ BSD license.
+
+Package: librhashmap1-dbg
+Section: debug
+Architecture: any
+Depends: ${misc:Depends}, librhashmap1 (= ${binary:Version})
+Description: Debug symbols for librhashmap1
+ Debug symbols for librhashmap1.
+
+Package: librhashmap-dev
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, librhashmap1 (= ${binary:Version})
+Description: Development files for librhashmap1
+ Development files for librhashmap1.

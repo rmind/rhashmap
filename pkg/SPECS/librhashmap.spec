@@ -1,5 +1,7 @@
+%define version	%(cat %{_topdir}/version.txt)
+
 Name:		librhashmap
-Version:	0.1.1
+Version:	%{version}
 Release:	1%{?dist}
 Summary:	Robin Hood hash map library
 Group:		System Environment/Libraries

@@ -10,7 +10,7 @@
  *
  * Conceptually, it is a hash table using linear probing on lookup with
  * a particular displacement strategy on inserts.  The central idea of
- * of the Robin Hood hashing algorithm is to reduce the variance of the
+ * the Robin Hood hashing algorithm is to reduce the variance of the
  * probe sequence length (PSL).
  *
  * Reference:
@@ -78,7 +78,7 @@ validate_psl_p(rhashmap_t *hmap, const rh_bucket_t *bucket, unsigned i)
 /*
  * rhashmap_get: lookup an value given the key.
  *
- * => If key is present, return the associated value; otherwise NULL.
+ * => If key is present, return its associated value; otherwise NULL.
  */
 void *
 rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)
@@ -221,7 +221,7 @@ rhashmap_resize(rhashmap_t *hmap, size_t newsize)
 
 	/*
 	 * Check for an overflow and allocate buckets.  Also, generate
-	 * a new hash key / seed every time we resize the hash table.
+	 * a new hash key/seed every time we resize the hash table.
 	 */
 	if (newsize > UINT_MAX || (newbuckets = calloc(1, len)) == NULL) {
 		return -1;
@@ -254,8 +254,8 @@ rhashmap_resize(rhashmap_t *hmap, size_t newsize)
 /*
  * rhashmap_put: insert a value given the key.
  *
- * => If the key is already present, returns the associated value.
- * => Otherwise, on successful insert, returns the given value.
+ * => If the key is already present, return its associated value.
+ * => Otherwise, on successful insert, return the given value.
  */
 void *
 rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)
@@ -281,9 +281,9 @@ rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)
 }
 
 /*
- * rhashmap_del: remove the given key and retur its value.
+ * rhashmap_del: remove the given key and return its value.
  *
- * => If key was present, return the associated value; otherwise NULL.
+ * => If key was present, return its associated value; otherwise NULL.
  */
 void *
 rhashmap_del(rhashmap_t *hmap, const void *key, size_t len)
@@ -364,7 +364,7 @@ probe:
 /*
  * rhashmap_create: construct a new hash table.
  *
- * => If size is non-zero, then pre-allocated the given number of buckets;
+ * => If size is non-zero, then pre-allocate the given number of buckets;
  * => If size is zero, then a default minimum is used.
  */
 rhashmap_t *
@@ -388,7 +388,7 @@ rhashmap_create(size_t size, unsigned flags)
 }
 
 /*
- * rhashmap_destroy: frees the memory taken by the hash table.
+ * rhashmap_destroy: free the memory used by the hash table.
  *
  * => It is the responsibility of the caller to remove elements if needed.
  */

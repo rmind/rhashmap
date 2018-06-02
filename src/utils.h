@@ -45,6 +45,16 @@
 #endif
 
 /*
+ * DSO visibility attributes (for ELF targets).
+ */
+
+#if defined(__GNUC__) && __GNUC__ >= (4)
+#define	__dso_hidden	__attribute__((__visibility__("hidden")))
+#else
+#define	__dso_hidden
+#endif
+
+/*
  * Find first bit.
  */
 
@@ -56,7 +66,7 @@ fls(int x)
 }
 #endif
 
-uint32_t	murmurhash3(const void *, size_t, uint32_t);
-uint32_t	halfsiphash(const uint8_t *, const size_t, const uint64_t);
+uint32_t	murmurhash3(const void *, size_t, uint32_t) __dso_hidden;
+uint32_t	halfsiphash(const uint8_t *, const size_t, const uint64_t) __dso_hidden;
 
 #endif
