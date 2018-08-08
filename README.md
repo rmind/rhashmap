@@ -34,8 +34,8 @@ Reference:
   * Destroy the hash map, freeing the memory it uses.
 
 * `void *rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)`
-  * Lookup the key (of a given length) and return the associated with it.
-  Return `NULL` if the key is not found (see the caveats section) ,
+  * Lookup the key (of a given length) and return the value associated with it.
+  Return `NULL` if the key is not found (see the caveats section).
 
 * `void *rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)`
   * Insert the key with an arbitrary value.  If the key is already present,
