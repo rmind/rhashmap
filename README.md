@@ -49,6 +49,9 @@ Reference:
 
 ## Notes
 
+The hash table will grow when it reaches ~85% fill and will shrink when
+the fill is below ~40%.
+
 With small to medium key sizes, Robin Hood hash map scores above Judy
 array (JudyHS) and Google Sparse hash map on lookup performance benchmarks.
 With the very small key sizes, it demonstrates similar performance to JudyHS.
