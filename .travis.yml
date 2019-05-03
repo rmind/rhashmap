@@ -1,10 +1,32 @@
-sudo: required
-dist: trusty
-
 language: c
 
 compiler:
   - gcc
   - clang
 
-script: cd src && make tests
+dist: bionic
+
+matrix:
+  include:
+    - os: linux
+      arch: amd64
+    - os: linux
+      arch: arm64
+    - os: linux
+      arch: ppc64le
+
+addons:
+  apt:
+    update: true
+    packages:
+    - build-essential
+    - fakeroot
+    - debhelper
+    - libtool
+    - libtool-bin
+
+script:
+  # Build the package.
+  - (cd pkg && make deb)
+  # Run the unit tests.
+  - (cd src && make clean && make tests)
