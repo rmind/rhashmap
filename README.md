@@ -47,16 +47,10 @@ Reference:
   * Remove the given key.  If the key was present, return the associated
   value; otherwise return `NULL`.
 
-## Notes
-
-The hash table will grow when it reaches ~85% fill and will shrink when
-the fill is below ~40%.
-
-With small to medium key sizes, Robin Hood hash map scores above Judy
-array (JudyHS) and Google Sparse hash map on lookup performance benchmarks.
-With the very small key sizes, it demonstrates similar performance to JudyHS.
-
 ## Caveats
+
+* The hash table will grow when it reaches ~85% fill and will shrink when
+the fill is below ~40%.
 
 * The key sizes greater than 64 KB are not supported.  The hash map supports
 up to `UINT_MAX` elements, which is, on any modern CPU architecture, more than
@@ -67,6 +61,16 @@ use cases, while allowing this implementation to use less memory.
 cannot indicate whether the key was not found or a key with a NULL value
 was found.  If the caller needs to indicate an "empty" value, it can use a
 special pointer value, such as `(void *)(uintptr_t)0x1`.
+
+## Performance
+
+With small to medium key sizes, Robin Hood hash map scores above Judy
+array (JudyHS) and Google Sparse hash map on lookup performance benchmarks.
+With the very small key sizes, it demonstrates similar performance to JudyHS.
+
+Disclaimer: benchmark results, however, depend on many aspects (workload,
+hardware characteristics, methodology, etc).  Ultimately, readers are
+encouraged to perform their own benchmarks.
 
 ## Example
 
