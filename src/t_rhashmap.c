@@ -193,6 +193,36 @@ test_random(void)
 	free(lens);
 }
 
+static void
+test_walk(void)
+{
+	const unsigned nitems = 17; // prime
+	rhashmap_t *hmap;
+	void *ret, *key, *val;
+	uint32_t bitmap = 0;
+	uintmax_t iter;
+	size_t klen;
+
+	hmap = rhashmap_create(0, 0);
+	assert(hmap != NULL);
+
+	iter = RHM_WALK_BEGIN;
+	key = rhashmap_walk(hmap, &iter, &klen, &val);
+	assert(key == NULL);
+
+	for (unsigned i = 0; i < nitems; i++) {
+		ret = rhashmap_put(hmap, &i, sizeof(int), NUM2PTR(i));
+		assert(ret == NUM2PTR(i));
+	}
+	iter = RHM_WALK_BEGIN;
+	while ((key = rhashmap_walk(hmap, &iter, &klen, &val)) != NULL) {
+		bitmap |= 1U << (uintptr_t)val;
+	}
+	assert(bitmap == 0x1ffff);
+
+	rhashmap_destroy(hmap);
+}
+
 int
 main(void)
 {
@@ -200,6 +230,7 @@ main(void)
 	test_large();
 	test_delete();
 	test_random();
+	test_walk();
 	puts("ok");
 	return 0;
 }
