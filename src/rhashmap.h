@@ -23,6 +23,10 @@ void *		rhashmap_get(rhashmap_t *, const void *, size_t);
 void *		rhashmap_put(rhashmap_t *, const void *, size_t, void *);
 void *		rhashmap_del(rhashmap_t *, const void *, size_t);
 
+#define	RHM_WALK_BEGIN		((uintmax_t)0)
+
+void *		rhashmap_walk(rhashmap_t *, uintmax_t *, size_t *, void **);
+
 __END_DECLS
 
 #endif

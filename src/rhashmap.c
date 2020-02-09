@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Mindaugas Rasiukevicius <rmind at noxt eu>
+ * Copyright (c) 2017-2020 Mindaugas Rasiukevicius <rmind at noxt eu>
  * All rights reserved.
  *
  * Use is subject to license terms, as specified in the LICENSE file.
@@ -30,7 +30,6 @@
 #include "fastdiv.h"
 #include "utils.h"
 
-#define	HASH_INIT_SIZE		(16)
 #define	MAX_GROWTH_STEP		(1024U * 1024)
 
 #define	APPROX_85_PERCENT(x)	(((x) * 870) >> 10)
@@ -48,10 +47,17 @@ struct rhashmap {
 	unsigned	size;
 	unsigned	nitems;
 	unsigned	flags;
+	unsigned	minsize;
 	uint64_t	divinfo;
 	rh_bucket_t *	buckets;
 	uint64_t	hashkey;
-	unsigned	minsize;
+
+	/*
+	 * Small optimisation for a single element case: allocate one
+	 * bucket together with the hashmap structure -- it will generally
+	 * fit within the same cache-line.
+	 */
+	rh_bucket_t	init_bucket;
 };
 
 static inline uint32_t __attribute__((always_inline))
@@ -223,7 +229,12 @@ rhashmap_resize(rhashmap_t *hmap, size_t newsize)
 	 * Check for an overflow and allocate buckets.  Also, generate
 	 * a new hash key/seed every time we resize the hash table.
 	 */
-	if (newsize > UINT_MAX || (newbuckets = calloc(1, len)) == NULL) {
+	if (newsize == 1) {
+		memset(&hmap->init_bucket, 0, sizeof(rh_bucket_t));
+		newbuckets = &hmap->init_bucket;
+	} else if (newsize > UINT_MAX) {
+		return -1;
+	} else if ((newbuckets = calloc(1, len)) == NULL) {
 		return -1;
 	}
 	hmap->buckets = newbuckets;
@@ -245,7 +256,7 @@ rhashmap_resize(rhashmap_t *hmap, size_t newsize)
 			free(bucket->key);
 		}
 	}
-	if (oldbuckets) {
+	if (oldbuckets && oldbuckets != &hmap->init_bucket) {
 		free(oldbuckets);
 	}
 	return 0;
@@ -361,6 +372,31 @@ probe:
 	return val;
 }
 
+void *
+rhashmap_walk(rhashmap_t *hmap, uintmax_t *iter, size_t *lenp, void **valp)
+{
+	const unsigned hmap_size = hmap->size;
+	unsigned i = *iter;
+
+	while (i < hmap_size) {
+		rh_bucket_t *bucket = &hmap->buckets[i];
+
+		i++; // next
+		if (!bucket->key) {
+			continue;
+		}
+		*iter = i;
+		if (lenp) {
+			*lenp = bucket->len;
+		}
+		if (valp) {
+			*valp = bucket->val;
+		}
+		return bucket->key;
+	}
+	return NULL;
+}
+
 /*
  * rhashmap_create: construct a new hash table.
  *
@@ -377,7 +413,7 @@ rhashmap_create(size_t size, unsigned flags)
 		return NULL;
 	}
 	hmap->flags = flags;
-	hmap->minsize = MAX(size, HASH_INIT_SIZE);
+	hmap->minsize = MAX(size, 1);
 	if (rhashmap_resize(hmap, hmap->minsize) != 0) {
 		free(hmap);
 		return NULL;
@@ -404,6 +440,8 @@ rhashmap_destroy(rhashmap_t *hmap)
 			}
 		}
 	}
-	free(hmap->buckets);
+	if (hmap->buckets != &hmap->init_bucket) {
+		free(hmap->buckets);
+	}
 	free(hmap);
 }
