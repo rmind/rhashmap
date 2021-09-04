@@ -55,10 +55,22 @@
 #endif
 
 /*
+ * Byte-order conversions.
+ */
+#if defined(__linux__) || defined(sun)
+#include <endian.h>
+#elif defined(__APPLE__)
+#include <libkern/OSByteOrder.h>
+#define	htole32(x)	OSSwapHostToLittleInt32(x)
+#else
+#include <sys/endian.h>
+#endif
+
+/*
  * Find first bit.
  */
 
-#ifndef fls
+#if !defined(fls) && !defined(__APPLE__)
 static inline int
 fls(int x)
 {

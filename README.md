@@ -22,16 +22,18 @@ Reference:
   otherwise, a default size will be used.  Certain hash map behaviour can
   be specified using any of the following optional `flags`:
     * `RHM_NOCOPY`: the keys on insert will not be copied and the given
-    pointers to them will be expected to be valid and the values constant
-    until the key is deleted; by default, the put operation will make a
-    copy of the key.
+    pointers to them will be expected to be valid (as well as their values
+    constant) until the key is deleted; by default, the put operation will
+    make a copy of the key.
     * `RHM_NONCRYPTO`: a non-cryptographic hash function will be used to
     provide higher performance.  By default, half SipHash-2-4 is used to
     defend against the hash-flooding DoS attacks.  With this flag set,
     the hash function will be switched to the MurmurHash3 algorithm.
 
 * `void rhashmap_destroy(rhashmap_t *hmap)`
-  * Destroy the hash map, freeing the memory it uses.
+  * Destroy the hash map, freeing the memory it uses.  The internal key
+  copies (when `RHM_NOCOPY` is not set) will be freed, but otherwise it is
+  the responsibility of the user to remove keys prior the destruction.
 
 * `void *rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)`
   * Lookup the key (of a given length) and return the value associated with it.
