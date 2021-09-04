@@ -9,8 +9,6 @@
  */
 
 #include <inttypes.h>
-#include <endian.h>
-
 #include "utils.h"
 
 uint32_t
