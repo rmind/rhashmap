@@ -65,13 +65,12 @@ fast_div32_init(uint32_t div)
 }
 
 static inline uint32_t
-fast_div32(uint32_t v, uint32_t div, uint64_t divinfo)
+fast_div32(uint32_t v, uint32_t, uint64_t divinfo)
 {
 	const uint32_t m = divinfo >> 32;
 	const unsigned s1 = (divinfo & 0x0000ff00) >> 8;
 	const unsigned s2 = (divinfo & 0x000000ff);
 	const uint32_t t = (uint32_t)(((uint64_t)v * m) >> 32);
-	(void)div; // unused
 	return (t + ((v - t) >> s1)) >> s2;
 }
 

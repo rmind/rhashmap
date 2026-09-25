@@ -5,17 +5,13 @@
 PROJ=		rhashmap
 
 SYSNAME:=	$(shell uname -s)
-SYSARCH:=	$(shell uname -m)
 
-CFLAGS+=	-std=c11 -O2 -g -Wall -Wextra -Werror
-CFLAGS+=	-D_POSIX_C_SOURCE=200809L
-CFLAGS+=	-D_GNU_SOURCE -D_DEFAULT_SOURCE
+CFLAGS+=	-std=c23 -O2 -g -Wall -Wextra -Werror
 
 #
 # Extended warning flags.
 #
 CFLAGS+=	-Wno-unknown-warning-option # gcc vs clang
-
 CFLAGS+=	-Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith
 CFLAGS+=	-Wmissing-declarations -Wredundant-decls -Wnested-externs
 CFLAGS+=	-Wshadow -Wcast-qual -Wcast-align -Wwrite-strings
@@ -24,19 +20,39 @@ CFLAGS+=	-Wsuggest-attribute=noreturn -Wjump-misses-init
 CFLAGS+=	-Wduplicated-cond -Wmisleading-indentation -Wnull-dereference
 CFLAGS+=	-Wduplicated-branches -Wrestrict
 
+#
+# Standard vs debug build flags.
+#
+
 ifeq ($(MAKECMDGOALS),tests)
 DEBUG=		1
 endif
 
-ifeq ($(DEBUG),1)
-CFLAGS+=	-Og -DDEBUG -fno-omit-frame-pointer
-ifeq ($(SYSARCH),x86_64)
+ifdef DEBUG
+CFLAGS+=	-O0 -ggdb -fno-omit-frame-pointer -DDEBUG
 CFLAGS+=	-fsanitize=address -fsanitize=undefined
 LDFLAGS+=	-fsanitize=address -fsanitize=undefined
-endif
 else
 CFLAGS+=	-DNDEBUG
+CFLAGS+=	-fvisibility=hidden
 endif
+
+#
+# System-specific compiler flags.
+#
+ifeq ($(SYSNAME),Linux)
+CFLAGS+=	-D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE -D_DEFAULT_SOURCE
+endif
+ifeq ($(SYSNAME),Darwin)
+LIBTOOL=	glibtool
+LDFLAGS+=	-no-undefined
+endif
+
+LIBTOOL?=	libtool
+
+#
+# Main targets.
+#
 
 LIB=		lib$(PROJ)
 INCS=		rhashmap.h
@@ -55,17 +71,17 @@ obj: $(OBJS)
 lib: $(LIB).la
 
 %.lo: %.c
-	libtool --mode=compile --tag CC $(CC) $(CFLAGS) -c $<
+	$(LIBTOOL) --mode=compile --tag CC $(CC) $(CFLAGS) -c $<
 
 $(LIB).la: $(shell echo $(OBJS) | sed 's/\.o/\.lo/g')
-	libtool --mode=link --tag CC $(CC) $(LDFLAGS) -o $@ $(notdir $^)
+	$(LIBTOOL) --mode=link --tag CC $(CC) $(LDFLAGS) -o $@ $(notdir $^)
 
 install/%.la: %.la
 	mkdir -p $(ILIBDIR)
-	libtool --mode=install install -c $(notdir $@) $(ILIBDIR)/$(notdir $@)
+	$(LIBTOOL) --mode=install install -c $(notdir $@) $(ILIBDIR)/$(notdir $@)
 
 install: $(addprefix install/,$(LIB).la)
-	libtool --mode=finish $(LIBDIR)
+	$(LIBTOOL) --mode=finish $(LIBDIR)
 	mkdir -p $(IINCDIR) && install -c $(INCS) $(IINCDIR)
 	#mkdir -p $(IMANDIR) && install -c $(MANS) $(IMANDIR)
 
@@ -74,7 +90,7 @@ tests: $(OBJS) t_$(PROJ).o
 	MALLOC_CHECK_=3 ./t_$(PROJ)
 
 clean:
-	libtool --mode=clean rm
+	$(LIBTOOL) --mode=clean rm
 	rm -rf .libs *.o *.lo *.la t_$(PROJ)
 
 .PHONY: all obj lib install tests clean

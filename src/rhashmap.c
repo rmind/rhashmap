@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Mindaugas Rasiukevicius <rmind at noxt eu>
+ * Copyright (c) 2017-2026 Mindaugas Rasiukevicius <rmind at noxt eu>
  * All rights reserved.
  *
  * Use is subject to license terms, as specified in the LICENSE file.
@@ -86,7 +86,7 @@ validate_psl_p(rhashmap_t *hmap, const rh_bucket_t *bucket, unsigned i)
  *
  * => If key is present, return its associated value; otherwise NULL.
  */
-void *
+__dso_public void *
 rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)
 {
 	const uint32_t hash = compute_hash(hmap, key, len);
@@ -268,7 +268,7 @@ rhashmap_resize(rhashmap_t *hmap, size_t newsize)
  * => If the key is already present, return its associated value.
  * => Otherwise, on successful insert, return the given value.
  */
-void *
+__dso_public void *
 rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)
 {
 	const size_t threshold = APPROX_85_PERCENT(hmap->size);
@@ -296,7 +296,7 @@ rhashmap_put(rhashmap_t *hmap, const void *key, size_t len, void *val)
  *
  * => If key was present, return its associated value; otherwise NULL.
  */
-void *
+__dso_public void *
 rhashmap_del(rhashmap_t *hmap, const void *key, size_t len)
 {
 	const size_t threshold = APPROX_40_PERCENT(hmap->size);
@@ -372,7 +372,7 @@ probe:
 	return val;
 }
 
-void *
+__dso_public void *
 rhashmap_walk(rhashmap_t *hmap, uintmax_t *iter, size_t *lenp, void **valp)
 {
 	const unsigned hmap_size = hmap->size;
@@ -403,7 +403,7 @@ rhashmap_walk(rhashmap_t *hmap, uintmax_t *iter, size_t *lenp, void **valp)
  * => If size is non-zero, then pre-allocate the given number of buckets;
  * => If size is zero, then a default minimum is used.
  */
-rhashmap_t *
+__dso_public rhashmap_t *
 rhashmap_create(size_t size, unsigned flags)
 {
 	rhashmap_t *hmap;
@@ -428,7 +428,7 @@ rhashmap_create(size_t size, unsigned flags)
  *
  * => It is the responsibility of the caller to remove elements if needed.
  */
-void
+__dso_public void
 rhashmap_destroy(rhashmap_t *hmap)
 {
 	if ((hmap->flags & RHM_NOCOPY) == 0) {
