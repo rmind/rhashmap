@@ -48,10 +48,27 @@
  * DSO visibility attributes (for ELF targets).
  */
 
+#ifndef __GNUC_PREREQ__
+#ifdef __GNUC__
+#define	__GNUC_PREREQ__(x, y) \
+    ((__GNUC__ == (x) && __GNUC_MINOR__ >= (y)) || (__GNUC__ > (x)))
+#else
+#define	__GNUC_PREREQ__(x, y)	0
+#endif
+#endif
+
 #if defined(__GNUC__) && __GNUC__ >= (4)
 #define	__dso_hidden	__attribute__((__visibility__("hidden")))
 #else
 #define	__dso_hidden
+#endif
+
+#if !defined(__dso_public)
+#if __GNUC_PREREQ__(4, 0)
+#define	__dso_public	__attribute__((__visibility__("default")))
+#else
+#define	__dso_public
+#endif
 #endif
 
 /*

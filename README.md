@@ -1,12 +1,12 @@
 # Robin Hood hash map
 
-[![Build Status](https://travis-ci.org/rmind/rhashmap.svg?branch=master)](https://travis-ci.org/rmind/rhashmap)
+![BUILD](https://github.com/rmind/rhashmap/actions/workflows/build.yaml/badge.svg)
 
 Robin Hood hash map library -- a general purpose hash table, using open
 addressing with linear probing and Robin Hood hashing for the collision
 resolution algorithm.  Optimal for solving the _dictionary problem_.
 The library provides support for the SipHash and Murmurhash3 algorithms.
-The implementation is written in C99 and distributed under the 2-clause
+The implementation is written in C11 and distributed under the 2-clause
 BSD license.
 
 Reference:

@@ -1,0 +1,75 @@
+name: Build
+on: [push]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build_and_tests:
+    name: Build and run the tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        cc: [gcc, clang]
+        include:
+          - os: ubuntu-latest
+            target: Linux
+          - os: macos-latest
+            target: MacOS
+      fail-fast: false
+
+    steps:
+      - name: Load dependencies from cache
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        id: apt-deps
+        uses: actions/cache@v6
+        with:
+          path: ubuntu-apt-cache
+          key: deps-1
+
+      - name: Install dependencies (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' && steps.apt-deps.outputs.cache-hit != 'true' }}
+        run: |
+          uname -a && cat /etc/os-release
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool-bin fakeroot debhelper gcc-14
+
+      - name: Update gcc (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.cc == 'gcc' }}
+        run: |
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 10
+          sudo update-alternatives --set cc /usr/bin/gcc
+
+      - name: Install dependencies (MacOS)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          uname -a
+          brew install libtool
+
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Checkout Git submodules
+        run: git submodule update --init --recursive
+
+      #
+      # Run tests and library build.
+      #
+
+      - name: Run tests
+        env:
+          CC: ${{ matrix.cc }}
+        run: |
+          cd src
+          make clean
+          make tests
+
+      - name: Build library
+        env:
+          CC: ${{ matrix.cc }}
+        run: |
+          cd src
+          make clean
+          LIBDIR=/usr/lib make lib

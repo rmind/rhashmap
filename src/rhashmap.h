@@ -8,7 +8,10 @@
 #ifndef _RHASHMAP_H_
 #define _RHASHMAP_H_
 
-__BEGIN_DECLS
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 
 struct rhashmap;
 typedef struct rhashmap rhashmap_t;
@@ -27,6 +30,9 @@ void *		rhashmap_del(rhashmap_t *, const void *, size_t);
 
 void *		rhashmap_walk(rhashmap_t *, uintmax_t *, size_t *, void **);
 
-__END_DECLS
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif
