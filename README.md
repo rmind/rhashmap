@@ -1,6 +1,6 @@
 # Robin Hood hash map
 
-![BUILD](https://github.com/rmind/rhashmap/actions/workflows/build.yaml/badge.svg)
+![TESTS](https://github.com/rmind/rhashmap/actions/workflows/tests.yaml/badge.svg)
 
 Robin Hood hash map library -- a general purpose hash table, using open
 addressing with linear probing and Robin Hood hashing for the collision
