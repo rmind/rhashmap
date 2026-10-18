@@ -84,13 +84,14 @@
 #endif
 
 /*
- * Find first bit.
+ * Find first/last bit.
  */
 
 #if !defined(fls) && !defined(__APPLE__)
 static inline int
 fls(int x)
 {
+	// C23 stdc_bit_width()
 	return x ? (sizeof(int) * CHAR_BIT) - __builtin_clz(x) : 0;
 }
 #endif

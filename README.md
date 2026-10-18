@@ -33,7 +33,7 @@ Reference:
 * `void rhashmap_destroy(rhashmap_t *hmap)`
   * Destroy the hash map, freeing the memory it uses.  The internal key
   copies (when `RHM_NOCOPY` is not set) will be freed, but otherwise it is
-  the responsibility of the user to remove keys prior the destruction.
+  the responsibility of the user to remove keys prior to the destruction.
 
 * `void *rhashmap_get(rhashmap_t *hmap, const void *key, size_t len)`
   * Lookup the key (of a given length) and return the value associated with it.

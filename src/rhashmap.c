@@ -64,8 +64,8 @@ static inline uint32_t __attribute__((always_inline))
 compute_hash(const rhashmap_t *hmap, const void *key, const size_t len)
 {
 	/*
-	 * Avoiding the use function pointers here; test and call relying
-	 * on branch predictors provides a better performance.
+	 * Avoiding the use of function pointers here; test and call relying
+	 * on branch predictors provides better performance.
 	 */
 	if (hmap->flags & RHM_NONCRYPTO) {
 		return murmurhash3(key, len, hmap->hashkey);
@@ -82,7 +82,7 @@ validate_psl_p(rhashmap_t *hmap, const rh_bucket_t *bucket, unsigned i)
 }
 
 /*
- * rhashmap_get: lookup an value given the key.
+ * rhashmap_get: lookup a value given the key.
  *
  * => If key is present, return its associated value; otherwise NULL.
  */

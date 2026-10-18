@@ -73,7 +73,7 @@ lib: $(LIB).la
 %.lo: %.c
 	$(LIBTOOL) --mode=compile --tag CC $(CC) $(CFLAGS) -c $<
 
-$(LIB).la: $(shell echo $(OBJS) | sed 's/\.o/\.lo/g')
+$(LIB).la: $(addprefix $(OBJDIR)/,$(OBJS:.o=.lo))
 	$(LIBTOOL) --mode=link --tag CC $(CC) $(LDFLAGS) -o $@ $(notdir $^)
 
 install/%.la: %.la
