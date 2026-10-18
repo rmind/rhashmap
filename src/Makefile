@@ -61,6 +61,9 @@ OBJS=		rhashmap.o
 OBJS+=		murmurhash.o
 OBJS+=		siphash.o
 
+LIBDIR?=	/usr/local/lib
+INCDIR?=	/usr/local/include
+
 $(LIB).la:	LDFLAGS+=	-rpath $(LIBDIR) -version-info 1:0:0
 install/%.la:	ILIBDIR=	$(DESTDIR)/$(LIBDIR)
 install:	IINCDIR=	$(DESTDIR)/$(INCDIR)/
@@ -73,7 +76,7 @@ lib: $(LIB).la
 %.lo: %.c
 	$(LIBTOOL) --mode=compile --tag CC $(CC) $(CFLAGS) -c $<
 
-$(LIB).la: $(addprefix $(OBJDIR)/,$(OBJS:.o=.lo))
+$(LIB).la: $(patsubst %.o,%.lo,$(OBJS))
 	$(LIBTOOL) --mode=link --tag CC $(CC) $(LDFLAGS) -o $@ $(notdir $^)
 
 install/%.la: %.la
